@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import type Pet from "../models/Pet";
 import EspecieEnum from "../enums/EspecieEnum";
 import PetRepository from "../repositories/PetRepository";
 import PetEntity from "../entities/PetEntity";
@@ -15,7 +14,7 @@ export default class PetController {
             return res.status(400).json({ erro: "Espécie informada não é válida! "})
         }
 
-        const novoPet = new PetEntity();
+        const novoPet = new PetEntity(nome, especie, dataNascimento, adotado);
         novoPet.nome = nome;
         novoPet.especie = especie;
         novoPet.dataNascimento = dataNascimento;
@@ -39,7 +38,7 @@ export default class PetController {
             return res.status(400).json({ erro: "Espécie informada não é válida! "})
         }
 
-        const pet = new PetEntity();
+        const pet = new PetEntity(nome, especie, dataNascimento, adotado);
         if(nome) pet.nome = nome;
         if(especie) pet.especie = especie;
         if(dataNascimento) pet.dataNascimento = dataNascimento;
@@ -62,6 +61,19 @@ export default class PetController {
         if (!success) {
             return res.status(404).json({ message });
         }
+        return res.sendStatus(204);
+    }
+
+    async adotaPet(req: Request, res: Response) {
+        const { idPet, idAdotante } = req.params;
+
+        const { success, message } = await this.repository.adotaPet(
+            Number(idPet),
+            Number(idAdotante)
+        );
+
+        if(!success) return res.status(400).json({ message });
+
         return res.sendStatus(204);
     }
 }
