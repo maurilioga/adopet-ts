@@ -2,23 +2,41 @@ import { Request, Response } from "express";
 import EspecieEnum from "../enums/EspecieEnum";
 import PetRepository from "../repositories/PetRepository";
 import PetEntity from "../entities/PetEntity";
+import PorteEnum from "../enums/PorteEnum";
 
 export default class PetController {
 
     constructor(private repository: PetRepository){}
 
     criarPet(req: Request, res: Response) {
-        const { nome, especie, dataNascimento, adotado } = req.body as PetEntity;
+        const { 
+            nome, 
+            especie, 
+            porte, 
+            dataNascimento, 
+            adotado 
+        } = req.body as PetEntity;
 
         if(!Object.values(EspecieEnum).includes(especie)) {
             return res.status(400).json({ erro: "Espécie informada não é válida! "})
         }
 
-        const novoPet = new PetEntity(nome, especie, dataNascimento, adotado);
+        if(porte && !(porte in PorteEnum)) {
+            return res.status(400).json({ erro: "Porte informado não é válido! "})
+        }
+
+        const novoPet = new PetEntity(
+            nome, 
+            especie, 
+            dataNascimento, 
+            adotado, 
+            porte
+        );
         novoPet.nome = nome;
         novoPet.especie = especie;
         novoPet.dataNascimento = dataNascimento;
         novoPet.adotado = adotado;
+        novoPet.porte = porte;
 
         this.repository.criarPet(novoPet);
 
@@ -32,19 +50,35 @@ export default class PetController {
 
     async atualizarPet(req: Request, res: Response) {
         const { id } = req.params;
-        const { nome, especie, dataNascimento, adotado } = req.body as PetEntity;
+        const { 
+            nome, 
+            especie, 
+            porte, 
+            dataNascimento, 
+            adotado 
+        } = req.body as PetEntity;
 
         if(especie && !Object.values(EspecieEnum).includes(especie)) {
             return res.status(400).json({ erro: "Espécie informada não é válida! "})
         }
 
-        const pet = new PetEntity(nome, especie, dataNascimento, adotado);
+        const pet = new PetEntity(
+            nome, 
+            especie, 
+            dataNascimento, 
+            adotado, 
+            porte
+        );
         if(nome) pet.nome = nome;
         if(especie) pet.especie = especie;
         if(dataNascimento) pet.dataNascimento = dataNascimento;
         if(adotado) pet.adotado = adotado;
+        if(porte) pet.porte = porte;
 
-        const { success, message } = await this.repository.atualizarPet(pet, Number(id));
+        const { 
+            success, 
+            message 
+        } = await this.repository.atualizarPet(pet, Number(id));
 
         if(!success) {
             return res.status(400).json({ message });
@@ -56,7 +90,10 @@ export default class PetController {
     async excluirPet(req: Request, res: Response) {
         const { id } = req.params;
 
-        const { success, message } = await this.repository.excluirPet(Number(id));
+        const { 
+            success, 
+            message 
+        } = await this.repository.excluirPet(Number(id));
 
         if (!success) {
             return res.status(404).json({ message });
@@ -65,9 +102,15 @@ export default class PetController {
     }
 
     async adotaPet(req: Request, res: Response) {
-        const { idPet, idAdotante } = req.params;
+        const { 
+            idPet, 
+            idAdotante 
+        } = req.params;
 
-        const { success, message } = await this.repository.adotaPet(
+        const { 
+            success, 
+            message 
+        } = await this.repository.adotaPet(
             Number(idPet),
             Number(idAdotante)
         );
@@ -75,5 +118,27 @@ export default class PetController {
         if(!success) return res.status(400).json({ message });
 
         return res.sendStatus(204);
+    }
+
+    // async buscarPetPorPorte(req: Request, res: Response) {
+    //     const { porte } = req.query;
+
+    //     const listaPets = await this.repository.buscarPetPorPorte(porte as PorteEnum);
+
+    //     return res.status(200).json(listaPets);
+    // }
+
+    async buscarPetPorFiltro(req: Request, res: Response) {
+        const { 
+            campo, 
+            valor 
+        } = req.query;
+
+        const listaPets = await this.repository.buscarPetPorFiltro(
+            campo as keyof PetEntity, 
+            valor as string
+        );
+
+        return res.status(200).json(listaPets);
     }
 }

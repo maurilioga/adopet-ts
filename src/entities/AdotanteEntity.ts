@@ -27,7 +27,13 @@ export default class AdotanteEntity {
     @OneToMany(() => PetEntity,(pet) => pet.adotante)
     pets!: PetEntity[];
 
-    constructor(nome: string, cpf: string, senha: string, celular?: string, endereco?: EnderecoEntity) {
+    constructor(
+        nome: string, 
+        cpf: string, 
+        senha: string, 
+        celular?: string, 
+        endereco?: EnderecoEntity
+    ) {
         this.nome = nome;
         this.cpf = cpf;
         this.senha = senha;

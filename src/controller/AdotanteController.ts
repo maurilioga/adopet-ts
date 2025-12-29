@@ -9,7 +9,13 @@ export default class AdotanteController {
 
     async criarAdotante(req: Request, res: Response) {
         try {
-            const { nome, cpf, senha, celular, endereco } = req.body as AdotanteEntity;
+            const { 
+                nome, 
+                cpf, 
+                senha, 
+                celular, 
+                endereco 
+            } = req.body as AdotanteEntity;
 
             const adotante = new AdotanteEntity(
                 nome,
@@ -36,7 +42,13 @@ export default class AdotanteController {
 
     async atualizarAdotante(req: Request, res: Response) {
         const { id } = req.params;
-        const { nome, cpf, senha, celular, endereco } = req.body as AdotanteEntity;
+        const { 
+            nome, 
+            cpf, 
+            senha, 
+            celular, 
+            endereco 
+        } = req.body as AdotanteEntity;
 
         const adotante = new AdotanteEntity(nome, cpf, senha, celular, endereco);
         if(nome) adotante.nome = nome;
@@ -45,7 +57,10 @@ export default class AdotanteController {
         if(celular) adotante.celular = celular;
         if(endereco) adotante.endereco = endereco;
 
-        const { success, message } = await this.repository.atualizarAdotante(adotante, Number(id));
+        const { 
+            success, 
+            message 
+        } = await this.repository.atualizarAdotante(adotante, Number(id));
 
         if(!success) {
             return res.status(400).json({ message });
@@ -57,7 +72,10 @@ export default class AdotanteController {
     async excluirAdotante(req: Request, res: Response) {
         const { id } = req.params;
 
-        const { success, message } = await this.repository.excluirAdotante(Number(id));
+        const { 
+            success, 
+            message 
+        } = await this.repository.excluirAdotante(Number(id));
 
         if (!success) {
             return res.status(404).json({ message });
@@ -68,13 +86,19 @@ export default class AdotanteController {
 
     async atualizarEndereco(req: Request, res: Response) {
         const { idAdotante } = req.params;
-        const { cidade, estado } = req.body as EnderecoEntity;
+        const { 
+            cidade, 
+            estado 
+        } = req.body as EnderecoEntity;
 
         const endereco = new EnderecoEntity(cidade, estado);
         if(cidade) endereco.cidade = cidade;
         if(estado) endereco.estado = estado;
 
-        const { success, message } = await this.repository.atualizarEndereco(Number(idAdotante), endereco);
+        const { 
+            success, 
+            message 
+        } = await this.repository.atualizarEndereco(Number(idAdotante), endereco);
 
         if(!success) {
             return res.status(400).json({ message });

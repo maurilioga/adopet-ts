@@ -11,7 +11,10 @@ export default class EnderecoEntity {
     @Column()
     estado: string;
 
-    constructor(cidade: string, estado: string) {
+    constructor(
+        cidade: string, 
+        estado: string
+    ) {
         this.cidade = cidade;
         this.estado = estado;
     }
