@@ -16,7 +16,7 @@ router.post("/", (req, res) => petController.criarPet(req, res));
 router.get("/", (req, res) => petController.listarPets(req, res));
 router.put("/:id", (req, res) => petController.atualizarPet(req, res));
 router.delete("/:id", (req, res) => petController.excluirPet(req, res));
-router.put("/adotar/:idPet/:idAdotante", (req, res) => petController.adotaPet(req, res));
+router.put("/adotar/:id/:idAdotante", (req, res) => petController.adotaPet(req, res));
 // router.get("/buscarPorte", (req, res) => petController.buscarPetPorPorte(req, res));
 router.get("/filtro", (req, res) => petController.buscarPetPorFiltro(req, res));
 
